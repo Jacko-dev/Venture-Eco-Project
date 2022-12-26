@@ -1,7 +1,7 @@
 const ws = require('ws')
 const toPort = require('hash-to-port')
 
-const name = 'jack'
+const name = 'bob'
 
 const port = toPort(name)
 const server = new ws.Server({ port: port })

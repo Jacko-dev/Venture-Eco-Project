@@ -26,6 +26,7 @@ class Blockchain {
         block.mineBlock(this.difficulty)
 
         this.chain.push(Object.freeze(block))
+        this.addTransaction(new Transaction())
     }
     addTransaction(transaction) {
         this.transactions.push(Object.freeze(transaction))
