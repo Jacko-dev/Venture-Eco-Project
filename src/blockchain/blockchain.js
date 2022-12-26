@@ -6,13 +6,13 @@ class Blockchain {
         this.transactions = []
         this.difficulty = 4
     }
-    formatAdditionalData(blockType, blockData) {
+    formatAdditionalData = (blockType, blockData) =>  {
         return {
             blockType: blockType,
             blockData: blockData
         }
     }
-    getPrevBlock() {
+    getPrevBlock = () => {
         return this.chain[this.chain.length - 1]
     }
 }

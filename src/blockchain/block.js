@@ -12,7 +12,7 @@ class Block {
         this.prevHash = ''
         this.hash = this.calcHash()
     }
-    calcHash() {
+    calcHash = () => {
         return SHA256(
             JSON.stringify(this.data) +
             JSON.stringify(this.additionalData) +
@@ -22,7 +22,7 @@ class Block {
             this.prevHash
         )
     }
-    mineBlock(difficulty) {
+    mineBlock = (difficulty) => {
         while(!this.hash.startsWith(Array(1 + difficulty).join('0'))) {
             this.nonce++
             this.hash = this.calcHash()
