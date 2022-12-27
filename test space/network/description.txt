@@ -1,0 +1,16 @@
+
+
+In folder 'peer communication network':
+
+    A basic p2p server where the scripts connect
+    by creating addresses like 'ws://localhost:1234'.
+
+    Each script has a name to reference, the module 
+    'hash-to-port' will generate a unique hash from
+    each scripts unique name.
+
+    Each server will run a server that listens for 
+    connections and handles incoming data.
+
+    On data transfer it will be distributed to other 
+    connected scripts.
