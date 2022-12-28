@@ -6,6 +6,15 @@ const toPort = require('hash-to-port')
 const port = toPort(name)
 const server = new ws.Server({ port: port })
 
+const _name = 'amy'
+const _port = toPort(_name)
+const socket = new ws(`ws://localhost:${_port}`)
+
+setTimeout(() => {
+
+    console.log(socketStatus)
+}, 500)
+
 server.on('connection', (socket, request) => {
     console.log('new connection')
     
