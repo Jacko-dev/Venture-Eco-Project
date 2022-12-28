@@ -1,4 +1,4 @@
-const name = 'amy'
+const name = 'jeff'
 
 const ws = require('ws')
 const toPort = require('hash-to-port')
@@ -8,10 +8,10 @@ const server = new ws.Server({ port: port })
 
 server.on('connection', (socket, request) => {
     console.log('new connection')
-
+    
     socket.on('message', (data) => {
         const _data = data.toString('utf-8')
-        
+
         console.log(_data)
     })
 

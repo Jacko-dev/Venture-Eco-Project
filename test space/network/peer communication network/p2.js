@@ -9,13 +9,11 @@ const rl = readline.createInterface({
 })
 const emitter = new EventEmitter()
 
-allowInput()
-
 function allowInput() {
     rl.question('> ', (res) => {
         switch(res) {
             case 'add_peer':
-                rl.question('What is the name of new peer: ', (res) => emitter.emit('connect_peer', res))                
+                rl.question('What is the name of new peer: ', (res) => emitter.emit('connect_peer', res))
                 break
             case 'msg':
                 rl.question('What do you want to broadcast to peers: ', (res) => emitter.emit('broadcast_message', res))
