@@ -1,5 +1,6 @@
 const ws = require('ws')
-const toPort = require('hash-to-port')
+const cp = require('child_process')
+const toPort = require('hash-to-port')  
 const EventEmitter = require('events')
 const readline = require('readline')
 
@@ -20,7 +21,6 @@ class Peer {
 
         this.prompt()
         this.connect('amy')
-        console.log
     }
     prompt() {
         this.rl.question('> ', (res) => {
@@ -37,19 +37,34 @@ class Peer {
                     break
                 case 'message options': this.emitter.emit('prompt_message_options')
                     break
-                case 'add peer': this.emitter.emit('add_peer', args)
+                case 'add peers': this.emitter.emit('add_peers', args)
                     break
-                case 'remove peer': this.emitter.emit('remove_peer', args)
+                case 'remove peers': this.emitter.emit('remove_peers', args)
                     break
-                case 'message peer':
+                case 'message peers':
+                    this.rl.question('(msg)> ', (res) => {
+                        if(args[0] === 'broadcast') {
+                            
+                        }
+                        args.push(res)
+                        this.emitter.emit('message_peers', args)
+                    })
                     break
-                case 'lookup peer': this.emitter.emit('lookup_peer', args)
-                    break
-                case 'lookup peers':
+                case 'lookup peers': this.emitter.emit('lookup_peers', args)
                     break
                 default:
-                    console.log('Invalid input')
-                    this.prompt()
+                    cp.exec(res, (err, stdout, stderr) => {
+                        if(err) {
+                            console.log('Invalid Input')
+                            this.prompt()
+                        }
+                        if(stdout) {
+                            console.log(`CMD command found: ${res}`)
+                            console.log(stdout)
+                            this.prompt()
+                            return
+                        }
+                    })
                     break
             }
         })
@@ -96,7 +111,7 @@ class Peer {
             this.prompt()
         })
 
-        this.emitter.on('add_peer', (peerNames) => {
+        this.emitter.on('add_peers', (peerNames) => {
             if(peerNames.length < 1) {
                 console.log(`Error: No arguments present`)
                 this.prompt()
@@ -127,34 +142,43 @@ class Peer {
             }
         })
 
-        this.emitter.on('remove_peer', (peerName) => {
-            
-            const _peerName = peerName[0]
-        })
-
-        this.emitter.on('message_peer', (peerName) => {
-
-        })
-
-        this.emitter.on('lookup_peer', (peerName) => {
-            if(peerName.length > 1) {
-                console.log(`Error: Receved \'${peerName.length}\' arguments, only 1 acceptable`)
-                this.prompt()
+        this.emitter.on('remove_peers', (peerNames) => {
+            for(let i = 0; i < peerNames.length; i++) {
+                this.peers.get(peerNames[i]).close(4040, 'socket was disconnected')
             }
-            const _peerName = peerName[0]
-            if(this.isPeerConnected(_peerName) === false) {
-                console.log(`Error: \'${_peerName}\' isn\'t connected`)
-                this.prompt()
+        })
+
+        this.emitter.on('message_peers', (args) => {
+            const peerNames = args.slice(0, args.length - 1)
+            const messageStr = args[args.length]
+            let isValid = true
+            for(let i = 0; i < peerNames.length; i++) {
+                if(this.isPeerConnected(peerNames[i]) === false) {
+                    isValid = false
+                    break
+                }
+            }
+            if(isValid === false) {
+                console.log(`Error: \'${peerNames[i]}\' isn\'t a connected peer`)
                 return
             }
-            const socketStats = this.lookupPeerStatus(_peerName)
-            console.log(socketStats)
-            this.prompt()
-            return
+            for(let i = 0; i < peerNames.length; i++) {
+                this.message(messageStr)
+            }
         })
 
-        this.emitter.on('lookup_peers', () => {
-
+        this.emitter.on('lookup_peers', (peerNames) => {
+            for(let i = 0; i < peerNames.length; i++) {
+                if(this.isPeerConnected(peerNames[i]) === false) {
+                    console.log(`Error: \'${peerNames[i]}\' isn\'t connected`)
+                    this.prompt()
+                    break
+                }
+                const peerData = this.lookupPeerStatus(peerNames[i])
+                console.log(peerData)
+            }
+            this.prompt()
+            return
         })
     }
     message(messageString) {
@@ -255,4 +279,4 @@ class Peer {
     }
 }
 
-const _peer = new Peer('jack')
+const peer = new Peer('jack')
